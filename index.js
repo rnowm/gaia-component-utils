@@ -10,15 +10,14 @@
      * Injects a style.css into both the shadow root and outside the shadow
      * root so we can style projected content. Bug 992249.
      */
-    style: function(stylesheets, baseUrl) {
+    style: function(stylesheets) {
       var self = this;
 
       stylesheets.forEach(add);
 
       function add(stylesheet) {
         var style = document.createElement('style');
-        var url = baseUrl + stylesheet.url;
-        style.innerHTML = '@import url(' + url + ');';
+        style.innerHTML = '@import url(' + stylesheet.url + ');';
 
         if (stylesheet.scoped) {
           style.setAttribute('scoped', '');
@@ -32,9 +31,9 @@
 
         // The setTimeout is necessary to avoid missing @import styles
         // when appending two stylesheets. Bug 1003294.
-        style.onload = function nextTick() {
+        style.addEventListener('load', function() {
           self.shadowRoot.appendChild(style.cloneNode(true));
-        };
+        });
       }
     }
   };
